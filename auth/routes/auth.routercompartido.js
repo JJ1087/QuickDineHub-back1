@@ -7,6 +7,7 @@ const correoController = require('../controllers/correo.controller');
 const userRepartidor = require('../controllers/auth.controllerRepartidor');
 const User = require('../controllers/auth.controller'); // Importa el controlador de usuario
 const userRestaurante = require('../controllers/auth.controllerrestaurante');
+const logs = require('../controllers/auth.controllerLogs');
 
 module.exports = (router) => {
 router.post('/enviar-correo', correoController.enviarCorreo); // correo de verificacio-//compartido
@@ -19,4 +20,7 @@ router.post('/restaurar-con-correo', User.cambiarContraseña);
 
 router.get('/restaurar-con-correo-restaurante/:email', userRestaurante.obtenerPreguntaYRespuestaSecreta); // Utiliza el controlador de usuario
 router.post('/restaurar-con-correo-restaurante', userRestaurante.cambiarContraseña);
+
+router.post('/agregar-log-autentificacion', logs.agregarLogAutenticacion);//LOG AUTENTIFICACION
+
 }
