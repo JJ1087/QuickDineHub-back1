@@ -193,6 +193,7 @@ exports.mostrarpedido = async(req, res, next) => {
                     descripcionProducto: detalle.descripcionProducto,
                     cantidadProducto: detalle.cantidadProducto,
                     costoUnidad: detalle.cantidadProducto,
+                    especificaciones: detalle.especificacion,
                 });
             }
 
