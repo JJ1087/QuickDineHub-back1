@@ -193,6 +193,7 @@ exports.mostrarpedido = async(req, res, next) => {
                     descripcionProducto: detalle.descripcionProducto,
                     cantidadProducto: detalle.cantidadProducto,
                     costoUnidad: detalle.cantidadProducto,
+                    especificaciones: detalle.especificacion,
                 });
             }
 
@@ -210,7 +211,6 @@ exports.mostrarpedido = async(req, res, next) => {
                 distancia: pedido.distancia,
                 fechaPedido: pedido.createdAt,
                 noOrden: pedido.noOrden,
-                especificaciones: pedido.especificaciones,
                 costoEnvio: pedido.costoEnvio,
                 precioTotal: pedido.precioTotal,
                 nombreCliente: cliente ? cliente.nombre : "Cliente no encontrado",
