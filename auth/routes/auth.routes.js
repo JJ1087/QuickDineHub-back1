@@ -18,7 +18,7 @@ module.exports = (router) => {
     // router.post('/insertar-info-pago', Users.insertarInfoPago); // Nueva ruta para insertar información de pago
 
     router.get('/cantidad-productos', Comensal.obtenerCantidadProductos); 
-    //router.get('/info-producto1', Comensal.obtenerInfoDeProducto);    
+    router.get('/info-producto1', Comensal.obtenerInfoDeProducto);    
     router.get('/info-producto/:id', Comensal.obtenerInfoDeProductoPorId);
 
     router.post('/crear-orden', Comensal.crearOrden); // Nueva ruta para insertar información de la orden general
