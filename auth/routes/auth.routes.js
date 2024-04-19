@@ -2,7 +2,7 @@
 const Comensal = require('../controllers/auth.controllerComensal');
 const Users = require('../controllers/auth.controller');
 const Product = require('../controllers/auth.controller');
-
+const logs = require('../controllers/auth.controllerLogs');
 const express = require('express');
 const router = express.Router();
 const User = require('../controllers/auth.controller'); // Importa el controlador de usuario
@@ -18,7 +18,7 @@ module.exports = (router) => {
     // router.post('/insertar-info-pago', Users.insertarInfoPago); // Nueva ruta para insertar información de pago
 
     router.get('/cantidad-productos', Comensal.obtenerCantidadProductos); 
-    router.get('/info-producto1', Comensal.obtenerInfoDeProducto);    
+    //router.get('/info-producto1', Comensal.obtenerInfoDeProducto);    
     router.get('/info-producto/:id', Comensal.obtenerInfoDeProductoPorId);
 
     router.post('/crear-orden', Comensal.crearOrden); // Nueva ruta para insertar información de la orden general
@@ -46,5 +46,6 @@ module.exports = (router) => {
     router.put('/insertar-especificacion', Comensal.insertarEspecificacion);//ruta para insertar o actualizar la especificacion de un producto
     router.delete('/eliminar-de-carrito/:comensalId/:productId', Comensal.eliminarDeCarrito);
     router.put('/actualizar-carrito', Comensal.actualizarCarrito);
+    router.post('/registrar-error', logs.registrarError);
 
 }

@@ -139,7 +139,7 @@ exports.obtenerInfoDeProductoPorId = async (req, res, next) => {
   try {
     const productId = req.params.id;
     const objectId = new ObjectId(productId);
-    const product = await Product.findById(objectId);
+    const product = await Product.findById(objectId);//
     if (!product) {
       return res.status(404).json({ error: 'Producto no encontrado' });
     }
