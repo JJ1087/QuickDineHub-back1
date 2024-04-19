@@ -1,6 +1,7 @@
 // Importa el modelo de log de autenticación
 const AutenticacionLog = require('../models/logs-Autentificacion');
 const ErrorLog = require('../models/logs-Error');
+const TransaccionLog = require('../models/logs-Transacciones');
 
 
 
@@ -73,5 +74,29 @@ exports.registrarError = async (req, res) => {
     // Si hay un error, envía una respuesta de error
     console.error('Error al agregar el registro de log de error:', error);
     res.status(500).json({ message: 'Error al agregar el registro de log de error' });
+  }
+};
+
+
+exports.registrarTransaccion = async (req, res) => {
+  try {
+    const { transactionType, ordenId, comensalId } = req.body;
+
+    // Crea un nuevo registro de log de transacción
+    const nuevaTransaccionLog = new TransaccionLog({
+      transactionType,
+      ordenId,
+      comensalId
+    });
+
+    // Guarda el registro en la base de datos
+    await nuevaTransaccionLog.save();
+
+    // Envía una respuesta de éxito
+    res.status(200).json({ message: 'Registro de transacción agregado con éxito' });
+  } catch (error) {
+    // Si hay un error, envía una respuesta de error
+    console.error('Error al agregar el registro de transacción:', error);
+    res.status(500).json({ message: 'Error al agregar el registro de transacción' });
   }
 };
