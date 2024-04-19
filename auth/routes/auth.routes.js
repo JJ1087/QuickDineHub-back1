@@ -47,5 +47,7 @@ module.exports = (router) => {
     router.delete('/eliminar-de-carrito/:comensalId/:productId', Comensal.eliminarDeCarrito);
     router.put('/actualizar-carrito', Comensal.actualizarCarrito);
     router.post('/registrar-error', logs.registrarError);
+    router.post('/registrar-transaccion', logs.registrarTransaccion);
+    
 
 }
