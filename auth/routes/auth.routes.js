@@ -48,6 +48,8 @@ module.exports = (router) => {
     router.put('/actualizar-carrito', Comensal.actualizarCarrito);
     router.post('/registrar-error', logs.registrarError);
     router.post('/registrar-transaccion', logs.registrarTransaccion);
+    router.put('/ordenes/:id/actualizarEstado', logs.actualizarEstado); 
     
+    router.delete('/eliminar-producto-de-orden/:ordenId', logs.eliminarProductoDeOrden);
 
 }

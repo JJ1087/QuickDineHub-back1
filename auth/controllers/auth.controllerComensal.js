@@ -193,7 +193,7 @@ exports.crearDetalleOrden = async (req, res, next) => {
 exports.eliminarOrden = async (req, res, next) => {
   try {
     const orderId = req.params.id; // Obtener el ID de la orden de los parámetros de la URL
-    console.log('Id a buscar en back: ',orderId);
+    console.log('Id a buscar en back1: ',orderId);
     const resultado = await Orden.findByIdAndDelete(orderId); // Buscar y eliminar la orden por su ID
     if (!resultado) {
       // Si no se encuentra la orden, devolver un error 404
