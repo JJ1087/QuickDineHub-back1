@@ -6,7 +6,7 @@ const secret_key = '4^B@!eD57Rm#6LjP'; //IMPORTANTISIMO METER CLAVE EN UNA .ENV 
 const mongoose = require("mongoose");
 const Envio = require('../models/auth.modelInfoEnvio'); // Importa el modelo de envío
 const Pago = require('../models/auth.modelInfoPago'); // Importa el modelo de pago
-
+const logacceso = require('../models/logs-Acceso'); //log acceso
 
 //Funcion para registrar a los usuarios en la BD
 exports.createUser = async(req, res, next) => {
@@ -89,6 +89,17 @@ exports.loginUser = async(req, res, next) => {
                     accessToken: accessToken,
                     expiresIn: expiresIn
                 }
+
+                // Aquí creamos un nuevo documento de acceso exitoso
+                const nuevoAccesoLog = new logacceso({
+                    user_id: user._id,
+                    email: userData.email,
+                    inicioSesion: new Date(),
+                    intentosFallidos: 0 // No hubo intentos fallidos en este inicio de sesión
+                });
+
+                await nuevoAccesoLog.save(); // Guardamos el registro de acceso exitoso en la base de datos
+
 
                 // Se envía la respuesta con los datos del usuario
                 res.send({ dataUser });

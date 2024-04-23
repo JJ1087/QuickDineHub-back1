@@ -4,9 +4,13 @@ const { ObjectId } = require('mongoose');
 
 //especificaciones de tipo de datos
 const accesoLogSchema = new Schema({
-    user_id: { 
-        type: ObjectId, 
-        required: true, 
+    user_id: {
+        type: ObjectId,
+        required: true,
+    },
+    email: {
+        type: String,
+        required: true,
     },
     inicioSesion: {
         type: Date,
@@ -23,11 +27,8 @@ const accesoLogSchema = new Schema({
     },
     motivoBloqueo: {
         type: String,
-        
-    }
-},{
-    timestamps: true //guardar fecha de creacion y actualizacion de cuentas de usuario "NO REPUDIO"
 
-});
+    }
+}, { timestamps: true, versionKey: false });
 
 module.exports = mongoose.model('accesoLogs', accesoLogSchema)
