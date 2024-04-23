@@ -20,6 +20,7 @@ const ordenSchema = new Schema({
     costoEnvio: { type: Decimal128, required: true, },
     precioTotal: { type: Decimal128, required: true, },
     productoCancelado: [{ idDetalle: String, idProducto: String, nombreProducto: String }],
+    noProductos: { type: Number, default: 1 },
 
 }, {
     timestamps: true //guardar fecha y hora de solicitud del pedido

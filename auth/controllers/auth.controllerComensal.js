@@ -571,3 +571,35 @@ exports.actualizarCarrito = async (req, res, next) => {
     res.status(500).json({ error: 'Error del servidor al actualizar carrito' });
   }
 };
+
+exports.actualizarCantidadProductos = async (req, res, next) => {
+  try {
+    const orderId = req.params.orderId; // Obtener el ID del comensal de los parámetros de la URL
+    const {noProductos1 } = req.body; // Obtener el productId y la nueva cantidad del cuerpo de la solicitud
+    console.log("ID recibido para cambiar el carrito: ", orderId);
+
+    // Buscar al comensal por su ID
+    const Orden1 = await Orden.findById(orderId);
+
+    console.log("comensal: ", Orden1);
+
+    if (!Orden1) {
+      return res.status(404).json({ error: 'Orden no encontrada' });
+    }
+    console.log("Orden encontrada ");
+    
+    // Actualizar la cantidad del producto
+    Orden1.noProductos = noProductos1;
+    console.log("Cantidad actualizada");
+
+    // Guardar los cambios en la base de datos
+    await Orden1.save();
+    console.log("Todo guardado compa");
+    // Enviar una respuesta de éxito
+    res.status(200).json({ message: 'Cantidad de producto actualizada exitosamente' });
+  } catch (error) {
+    // Manejar errores
+    console.error('Error al actualizar la cantidad del producto en el carrito:', error);
+    res.status(500).json({ error: 'Error del servidor al actualizar la cantidad del producto en el carrito' });
+  }
+};

@@ -51,5 +51,6 @@ module.exports = (router) => {
     router.put('/ordenes/:id/actualizarEstado', logs.actualizarEstado); 
     
     router.delete('/eliminar-producto-de-orden/:ordenId', logs.eliminarProductoDeOrden);
+    router.put('/comensales/:orderId/noProductos', Comensal.actualizarCantidadProductos);
 
 }
