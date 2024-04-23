@@ -3,6 +3,10 @@ const AutenticacionLog = require('../models/logs-Autentificacion');
 const ErrorLog = require('../models/logs-Error');
 const TransaccionLog = require('../models/logs-Transacciones');
 
+const Orden = require('../models/auth.modelOrden');
+const User = require('../models/auth.model');
+const logacceso = require('../models/logs-Acceso'); //log acceso
+const detalleOrden = require('../models/auth.modelDetalleOrden'); 
 
 
 
@@ -99,4 +103,133 @@ exports.registrarTransaccion = async(req, res) => {
         console.error('Error al agregar el registro de transacción:', error);
         res.status(500).json({ message: 'Error al agregar el registro de transacción' });
     }
+};
+
+// LOG DE ACCESO Y FUERZA BRUTA---------------------------------------------------------------
+const AccesoLog = require('../models/logs-Acceso'); // Importa el modelo de log de acceso
+
+exports.actualizarIntentosFallidos = async(req, res) => {
+    const { userEmail, intentosFallidos } = req.body;
+    console.log('Editar:', userEmail);
+    console.log('Nuevo contador de intentos fallidos:', intentosFallidos);
+
+    try {
+        // Encuentra el registro de log más reciente para el usuario
+        const latestAccessLog = await AccesoLog.findOne({ email: userEmail }).sort({ createdAt: -1 });
+
+        // Actualiza el contador de intentos fallidos
+        latestAccessLog.intentosFallidos = intentosFallidos;
+
+        // Guarda los cambios en el registro de log
+        await latestAccessLog.save();
+
+        // Envía una respuesta de éxito con el nuevo valor de intentosFallidos
+        res.status(200).json({
+            message: 'Contador de intentos fallidos actualizado correctamente',
+            _id: latestAccessLog._id,
+            intentosFallidos: latestAccessLog.intentosFallidos,
+            inicioSesion: latestAccessLog.inicioSesion,
+            user_id: latestAccessLog.user_id
+        });
+    } catch (error) {
+        // Manejo de errores
+        console.error('Error al actualizar los intentos fallidos:', error);
+        res.status(500).json({ message: 'Error al actualizar los intentos fallidos' });
+    }
+};
+
+exports.obtenerIntentosFallidos = async(req, res) => {
+    const { userEmail } = req.query;
+
+    try {
+        // Encuentra el registro de log más reciente para el usuario
+        const latestAccessLog = await AccesoLog.findOne({ email: userEmail }).sort({ createdAt: -1 });
+
+        // Si no se encuentra el registro o no tiene intentos fallidos, devolver 0
+        if (!latestAccessLog || !latestAccessLog.intentosFallidos) {
+            return res.status(200).json({ intentosFallidos: 0 });
+        }
+
+        // Devolver el número de intentos fallidos
+        res.status(200).json({ intentosFallidos: latestAccessLog.intentosFallidos });
+    } catch (error) {
+        // Manejo de errores
+        console.error('Error al obtener los intentos fallidos:', error);
+        res.status(500).json({ message: 'Error al obtener los intentos fallidos' });
+    }
+};
+
+exports.actualizarEstado = async (req, res) => {
+  try {
+    const idOrden = req.params.id;
+    const orden = await Orden.findById(idOrden);
+    if (!orden) {
+      return res.status(404).json({ mensaje: 'Orden no encontrada' });
+    }
+    orden.estadoOrden = 3; // Actualizar el estado de la orden
+    await orden.save();
+    return res.status(200).json({ mensaje: 'Estado de la orden actualizado correctamente' });
+  } catch (error) {
+    console.error('Error al actualizar el estado de la orden:', error);
+    return res.status(500).json({ mensaje: 'Error interno del servidor' });
+  }
+};
+
+//Funcion para eliminar la orden completa--------------------------------------------
+
+exports.eliminarProductoDeOrden = async (req, res, next) => {
+  try {
+    
+    const { ordenId } = req.params; // Obtener el ID de la orden de los parámetros de la URL
+    console.log("Entramos a la funcion correcta: id: ", ordenId);
+    // Eliminar los documentos de la colección detalleordenes que coincidan con el idOrden
+    await detalleOrden.deleteMany({ idOrden: ordenId });
+
+    console.log("Se eliminaron los detalles");
+
+    // Buscar y eliminar el documento de la colección ordenes que coincida con el idOrden
+    const ordenEliminada = await Orden.findOneAndDelete({ _id: ordenId });
+    console.log("Se elimino la orden");
+
+    if (!ordenEliminada) {
+      return res.status(404).json({ error: 'Orden no encontrada' });
+    }
+
+    // Enviar una respuesta de éxito
+    res.status(200).json({ message: 'Orden eliminada exitosamente' });
+  } catch (error) {
+    // Manejar errores
+    console.error('Error al eliminar orden:', error);
+    res.status(500).json({ error: 'Error del servidor al eliminar orden' });
+  }
+};
+
+
+//Funcion para eliminar la orden completa--------------------------------------------
+
+exports.eliminarOrdenCompleta = async (req, res, next) => {
+  try {
+    
+    const { ordenId } = req.params; // Obtener el ID de la orden de los parámetros de la URL
+    console.log("Entramos a la funcion correcta: id: ", ordenId);
+    // Eliminar los documentos de la colección detalleordenes que coincidan con el idOrden
+    await detalleOrden.deleteMany({ idOrden: ordenId });
+
+    console.log("Se eliminaron los detalles");
+
+    // Buscar y eliminar el documento de la colección ordenes que coincida con el idOrden
+    const ordenEliminada = await Orden.findOneAndDelete({ _id: ordenId });
+    console.log("Se elimino la orden");
+
+    if (!ordenEliminada) {
+      return res.status(404).json({ error: 'Orden no encontrada' });
+    }
+
+    // Enviar una respuesta de éxito
+    res.status(200).json({ message: 'Orden eliminada exitosamente' });
+  } catch (error) {
+    // Manejar errores
+    console.error('Error al eliminar orden:', error);
+    res.status(500).json({ error: 'Error del servidor al eliminar orden' });
+  }
 };
