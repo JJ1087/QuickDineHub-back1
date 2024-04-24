@@ -191,6 +191,8 @@ exports.eliminarOrdenCompleta = async (req, res, next) => {
   try {
     
     const { ordenId } = req.params; // Obtener el ID de la orden de los parámetros de la URL
+
+    /* !!NO ELIMINAR ESTA PARTE DEL CODIGO, ESTO CONTIENE LA LOGICA PARA ELIMINAR UNA ORDEN COMPLETA EN CASO DE ASI REQUERIRSE!!
     console.log("Entramos a la funcion correcta: id: ", ordenId);
     // Eliminar los documentos de la colección detalleordenes que coincidan con el idOrden
     await detalleOrden.deleteMany({ idOrden: ordenId });
@@ -205,11 +207,48 @@ exports.eliminarOrdenCompleta = async (req, res, next) => {
       return res.status(404).json({ error: 'Orden no encontrada' });
     }
 
+    -----------------------------------*/
+
+    console.log("ID Orden:", ordenId);
+  
+      const orden = await Orden.findById(ordenId);
+  
+      if (!orden) {
+        return res.status(404).json({ mensaje: 'Orden no encontrada' });
+      }
+  
+      orden.estadoOrden = 8; // Actualizar el estado de la orden
+
+      await orden.save();
+
     // Enviar una respuesta de éxito
-    res.status(200).json({ message: 'Orden eliminada exitosamente' });
+    res.status(200).json({ message: 'Orden cancelada exitosamente' });
   } catch (error) {
     // Manejar errores
-    console.error('Error al eliminar orden:', error);
-    res.status(500).json({ error: 'Error del servidor al eliminar orden' });
+    console.error('Error al cancelar orden:', error);
+    res.status(500).json({ error: 'Error del servidor al CANCELAR orden' });
   }
 };
+
+exports.actualizarEstado2 = async (req, res) => {
+    try {
+      const idOrden = req.params.id;
+
+  
+      console.log("ID Orden:", idOrden);
+  
+      const orden = await Orden.findById(idOrden);
+  
+      if (!orden) {
+        return res.status(404).json({ mensaje: 'Orden no encontrada' });
+      }
+  
+      orden.estadoOrden = 9; // Actualizar el estado de la orden
+      orden.fechaHoraEntrega = new Date();
+      await orden.save();
+      return res.status(200).json({ mensaje: 'Estado de la orden actualizado correctamente' });
+    } catch (error) {
+      console.error('Error al actualizar el estado de la orden:', error);
+      return res.status(500).json({ mensaje: 'Error interno del servidor' });
+    }
+  };
