@@ -214,6 +214,7 @@ exports.mostrarpedido = async(req, res, next) => {
                 costoEnvio: pedido.costoEnvio,
                 precioTotal: pedido.precioTotal,
                 nombreCliente: cliente ? cliente.nombre : "Cliente no encontrado",
+                email: cliente.email,
                 //direccion: 
                 cp: MDireccion.cp,
                 ciudad: MDireccion.ciudad,

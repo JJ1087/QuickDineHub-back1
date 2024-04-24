@@ -34,4 +34,7 @@ module.exports = (router) => {
 
     router.post('/enviar-correo-log', correoController.enviarCorreRestablecimiento);
 
+    router.post('/enviar-correo-cancelarproducto', correoController.correocancelarproducto);
+    router.post('/enviar-correo-cancelarOrden', correoController.correocancelarorden);
+
 }
