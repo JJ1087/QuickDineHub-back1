@@ -162,10 +162,20 @@ exports.obtenerIntentosFallidos = async(req, res) => {
 exports.actualizarEstado = async (req, res) => {
   try {
     const idOrden = req.params.id;
+    const idDetalle = req.params.iDetalle;
+
+    console.log("ID Orden:", idOrden);
+    console.log("ID Detalle:", idDetalle);
+
+    // Eliminar el detalle de orden correspondiente
+    await detalleOrden.findByIdAndDelete(idDetalle);
+
     const orden = await Orden.findById(idOrden);
+
     if (!orden) {
       return res.status(404).json({ mensaje: 'Orden no encontrada' });
     }
+
     orden.estadoOrden = 3; // Actualizar el estado de la orden
     await orden.save();
     return res.status(200).json({ mensaje: 'Estado de la orden actualizado correctamente' });
@@ -174,36 +184,6 @@ exports.actualizarEstado = async (req, res) => {
     return res.status(500).json({ mensaje: 'Error interno del servidor' });
   }
 };
-
-//Funcion para eliminar la orden completa--------------------------------------------
-
-exports.eliminarProductoDeOrden = async (req, res, next) => {
-  try {
-    
-    const { ordenId } = req.params; // Obtener el ID de la orden de los parámetros de la URL
-    console.log("Entramos a la funcion correcta: id: ", ordenId);
-    // Eliminar los documentos de la colección detalleordenes que coincidan con el idOrden
-    await detalleOrden.deleteMany({ idOrden: ordenId });
-
-    console.log("Se eliminaron los detalles");
-
-    // Buscar y eliminar el documento de la colección ordenes que coincida con el idOrden
-    const ordenEliminada = await Orden.findOneAndDelete({ _id: ordenId });
-    console.log("Se elimino la orden");
-
-    if (!ordenEliminada) {
-      return res.status(404).json({ error: 'Orden no encontrada' });
-    }
-
-    // Enviar una respuesta de éxito
-    res.status(200).json({ message: 'Orden eliminada exitosamente' });
-  } catch (error) {
-    // Manejar errores
-    console.error('Error al eliminar orden:', error);
-    res.status(500).json({ error: 'Error del servidor al eliminar orden' });
-  }
-};
-
 
 //Funcion para eliminar la orden completa--------------------------------------------
 
