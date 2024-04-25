@@ -33,6 +33,7 @@ module.exports = (router) => {
 
     router.get('/info-detalleOrden', Comensal.obtenerInfoDetalleOrden);
     router.get('/info-ordenId/:id', Comensal.obtenerInfoOrdenId);
+    router.get('/info-detalleOrdenId/:id', Comensal.obtenerInfoDetalleOrdenId); 
 
     router.get('/info-comensalId/:id', Comensal.obtenerInfocomensalId);
     router.get('/obtener-direcciones2/:id', Comensal.obtenerDirecciones2);

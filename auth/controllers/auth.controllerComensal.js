@@ -301,6 +301,24 @@ exports.obtenerInfoOrdenId = async (req, res, next) => {
   }
 };
 
+
+exports.obtenerInfoDetalleOrdenId = async (req, res, next) => {
+  try {
+    const orderId = req.params.id;
+    const objectId = new ObjectId(orderId);
+
+    console.log("ID DETALLE", objectId);
+    const order = await DetalleOrden.findById(objectId);
+    if (!order) {
+      return res.status(404).json({ error: 'Orden no encontrada' });
+    }
+    res.status(200).json(order);
+  } catch (error) {
+    console.error('Error al obtener la información de la orden:', error);
+    res.status(500).json({ error: 'Error del servidor al obtener la información de la orden' });
+  }
+};
+
 //-------Estado-Envio----------------------------------------------------------------------------------
 
 exports.obtenerInfocomensalId = async (req, res, next) => {
