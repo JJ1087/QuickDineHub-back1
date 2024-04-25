@@ -137,6 +137,8 @@ const { ObjectId } = require('mongodb');
 exports.obtenerInfoDeProductoPorId = async(req, res, next) => {
     try {
         const productId = req.params.id;
+
+        console.log('lllega el id:',productId);
         const objectId = new ObjectId(productId);
         const product = await Product.findById(objectId);
         if (!product) {
@@ -148,6 +150,27 @@ exports.obtenerInfoDeProductoPorId = async(req, res, next) => {
         res.status(500).json({ error: 'Error del servidor al obtener la información del producto' });
     }
 };
+
+exports.obtenerInfoProductoPorRestaurante = async (req, res, next) => {
+    try {
+        const idRestaurante = req.params.id; // Obtiene el ID del restaurante del parámetro de la solicitud
+
+        console.log('ID del restaurante:', idRestaurante);
+
+        // Busca todos los productos que coincidan con el ID del restaurante
+        const productos = await Product.find({ idRestaurante: idRestaurante });
+
+        if (!productos || productos.length === 0) {
+            return res.status(404).json({ error: 'No se encontraron productos para este restaurante' });
+        }
+
+        res.status(200).json(productos); // Devuelve los productos encontrados
+    } catch (error) {
+        console.error('Error al obtener la información de los productos:', error);
+        res.status(500).json({ error: 'Error del servidor al obtener la información de los productos' });
+    }
+};
+
 
 //-----------------------------CREAR UNA ORDEN--------------------
 

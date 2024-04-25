@@ -20,6 +20,7 @@ module.exports = (router) => {
     router.get('/cantidad-productos', Comensal.obtenerCantidadProductos); 
     router.get('/info-producto1', Comensal.obtenerInfoDeProducto);    
     router.get('/info-producto/:id', Comensal.obtenerInfoDeProductoPorId);
+    router.get('/info-productoPorRestaurante/:id', Comensal.obtenerInfoProductoPorRestaurante);
 
     router.post('/crear-orden', Comensal.crearOrden); // Nueva ruta para insertar información de la orden general
     router.post('/crear-detalleOrden', Comensal.crearDetalleOrden); // Nueva ruta para insertar información de los productos de la orden
@@ -53,5 +54,7 @@ module.exports = (router) => {
     router.delete('/eliminar-producto-de-orden/:ordenId', logs.eliminarOrdenCompleta);
     router.put('/comensales/:orderId/noProductos', Comensal.actualizarCantidadProductos);
     router.put('/ordenes/:id/actualizarEstado', logs.actualizarEstado2); 
+
+    router.get('/restaurantes/nombres', User.obtenerRestaurantes);
 
 }

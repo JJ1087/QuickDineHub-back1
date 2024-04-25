@@ -33,6 +33,9 @@ const userSchema = new Schema({
     licenciaFuncionamiento: { type: String, required: true, },
     estadoPerfil: { type: String, required: true, },
     rol: { type: String, required: true, },
+    //DATOS EXTRA
+    descripcionRestaurant: { type: String, },
+    logoRestaurant: { type: String,  },
 }, { timestamps: true, versionKey: false });
 
 module.exports = mongoose.model('usuariorestaurante', userSchema)

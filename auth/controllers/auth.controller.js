@@ -7,7 +7,7 @@ const mongoose = require("mongoose");
 const Envio = require('../models/auth.modelInfoEnvio'); // Importa el modelo de envío
 const Pago = require('../models/auth.modelInfoPago'); // Importa el modelo de pago
 const logacceso = require('../models/logs-Acceso'); //log acceso
-
+const Restaurant = require('../models/auth.modelrestaurante');
 //Funcion para registrar a los usuarios en la BD
 exports.createUser = async(req, res, next) => {
     console.log('Datos recibidos del Front:', req.body);
@@ -242,3 +242,14 @@ exports.cambiarContraseña = async(req, res, next) => {
         return res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
+
+exports.obtenerRestaurantes = async (req, res) => {
+    try {
+      const restaurantes = await Restaurant.find({}); // Obtener todos los datos de los restaurantes
+      res.status(200).json(restaurantes);
+    } catch (error) {
+      console.error('Error al obtener los restaurantes:', error);
+      res.status(500).json({ message: 'Error interno del servidor' });
+    }
+};
+
