@@ -39,6 +39,8 @@ exports.createUserRes = async(req, res, next) => {
             ciudad: req.body.ciudad,
             codigoPostal: req.body.codigoPostal,
             numeroCLABE: req.body.numeroCLABE,
+            horaApertura: req.body.horaApertura,
+            horaCierre: req.body.horaCierre,
             numeroPreguntaSecreta: req.body.numeroPreguntaSecreta,
             respuestaSecreta: req.body.respuestaSecreta,
             menuImagen: req.files['menuImagen'][0].path, // Guardar la ruta de la imagen de menu

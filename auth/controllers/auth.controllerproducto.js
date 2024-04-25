@@ -8,7 +8,11 @@ exports.Crearproducto = async(req, res, next) => {
 
     try {
         console.log('Datos recibidos del Front:', req.body);
-        // Crear nuevo usuario
+
+        // Convertir la cadena de etiquetas en un array
+        const etiquetasArray = JSON.parse(req.body.etiquetas);
+
+        // Crear nuevo producto
         const nuevoProducto = new Producto({
             _id: new mongoose.Types.ObjectId(),
             idRestaurante: req.body.idRestaurante,
@@ -17,7 +21,7 @@ exports.Crearproducto = async(req, res, next) => {
             categoria: req.body.categoria,
             tiempoP: req.body.tiempoP,
             precio: req.body.precio,
-            etiquetas: req.body.etiquetas,
+            etiquetas: etiquetasArray,
             oferta: '00',
             descuento: '00',
             costoEnvio: '20',

@@ -22,6 +22,8 @@ const userSchema = new Schema({
     ciudad: { type: String, required: true, },
     codigoPostal: { type: String, required: true, },
     numeroCLABE: { type: String, required: true, },
+    horaApertura: { type: String, required: true },
+    horaCierre: { type: String, required: true },
     numeroPreguntaSecreta: { type: String, required: true, },
     respuestaSecreta: { type: String, required: true, },
     //IMAGENES_ARCHIVOS
