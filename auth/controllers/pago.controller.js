@@ -2,46 +2,52 @@
 const mercadopago = require("mercadopago");
 const Product = require('../models/auth.modelMenu'); 
 exports.getData = async (req, res) => {
-  let dataProductos = [];
-  for(let i = 0; i<req.body.productos.length; i++) {
-    const products = await Product.findOne({_id:req.body.productos[i].id})
-    dataProductos.push({
-      id:products._id,
-      title: products.nombre,
-      quantity: req.body.productos[i].cantidad,
-      unit_price: parseInt(products.precio),
-    })
-  }
-  
-  console.log(dataProductos)
-  const client = new mercadopago.MercadoPagoConfig({
-    accessToken:
-      "TEST-1175297249318297-030816-e2ab1189bd638ddccd10514d28dab4cb-1719437028",
-  });
+  // let dataProductos = [];
+  // for(let i = 0; i<req.body.productos.length; i++) {
+  //   const products = await Product.findOne({_id:req.body.productos[i].id})
+  //   dataProductos.push({
+  //     id:products._id,
+  //     title: products.nombre,
+  //     quantity: req.body.productos[i].cantidad,
+  //     unit_price: parseInt(products.precio),
+  //   })
+  // }
+  let itemsProducts = [
+    {
+      title:'Productos',
+      quantity:1,
+      unit_price:req.body.total_pago
+    }
+  ]
+  console.log(itemsProducts)
+   const client = new mercadopago.MercadoPagoConfig({
+     accessToken:
+       "TEST-1175297249318297-030816-e2ab1189bd638ddccd10514d28dab4cb-1719437028",
+   });
 
-  const preference = new mercadopago.Preference(client);
-  let url = '';
+   const preference = new mercadopago.Preference(client);
+   let url = '';
 
-   preference
-     .create({
-       body: {
-         items: dataProductos,
-         payment_methods: {
-             excluded_payment_methods: [],
-             excluded_payment_types: [
-             ],
-             installments: 1
-           },
-         notification_url:'https://210c-187-249-108-43.ngrok-free.app/data-pago'
-       }
-     })
-     .then(data =>{
-         url = data.init_point
-         return res.json({
-             url_pago: url,
-           });
-     })
-     .catch(console.log);
+    preference
+      .create({
+        body: {
+          items: itemsProducts,
+          payment_methods: {
+              excluded_payment_methods: [],
+              excluded_payment_types: [
+              ],
+              installments: 1
+            },
+          notification_url:'https://1ac5-187-249-108-43.ngrok-free.app/data-pago'
+        }
+      })
+      .then(data =>{
+          url = data.init_point
+          return res.json({
+              url_pago: url,
+            });
+      })
+      .catch(console.log);
 };
 
 exports.saveCompra = async (req, res) =>{
