@@ -28,6 +28,7 @@ exports.getData = async (req, res) => {
    const preference = new mercadopago.Preference(client);
    let url = '';
 
+<<<<<<< HEAD
     preference
       .create({
         body: {
@@ -48,21 +49,43 @@ exports.getData = async (req, res) => {
             });
       })
       .catch(console.log);
+=======
+   preference
+     .create({
+       body: {
+         items: dataProductos,
+         payment_methods: {
+             excluded_payment_methods: [],
+             excluded_payment_types: [
+             ],
+             installments: 1
+           },
+         notification_url:'https://0cfe-2806-10a6-14-a62d-3814-59ee-32d6-cd65.ngrok-free.app/data-pago'
+       }
+     })
+     .then(data =>{
+         url = data.init_point
+         return res.json({
+             url_pago: url,
+           });
+     })
+     .catch(console.log);
+>>>>>>> 102d2b57b8bc1ebdb485073a615d9a08470ed0a4
 };
 
 exports.saveCompra = async (req, res) =>{
-    console.log((await req.body.data));
+    // console.log((await req.body.data));
     const client = new mercadopago.MercadoPagoConfig({
         accessToken:
           "TEST-705673372675327-042522-9021a1e87227a1621d73edc6ba52770c-1785204649",
       });
-      if(req.body.data !== undefined){
-        const data = new mercadopago.Payment(client).capture(req.body.data)
-        //console.log((await data));
-        return res.json({
-            message: 'Compra realizada'
-        })
-      }
+      // if(req.body.data !== undefined){
+      //   const data = new mercadopago.Payment(client).capture(req.body.data)
+      //   //console.log((await data));
+      //   return res.json({
+      //       message: 'Compra realizada'
+      //   })
+      // }
     res.json({
         message: 'Compra realizada'
     })
