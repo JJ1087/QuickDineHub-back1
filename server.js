@@ -1,4 +1,5 @@
 'use strict'
+
 //llamamos a las rutas
 const cors = require('cors');
 const authRoutes = require('./auth/routes/auth.routes.js');
@@ -8,7 +9,6 @@ const authRoutescompartido = require('./auth/routes/auth.routercompartido.js');
 const express = require('express');
 const properties = require('./config/properties.js');
 const DB = require('./config/db.js'); //llamar a la base de datos
-
 DB(); //init DB
 
 const app = express();
@@ -36,7 +36,6 @@ router.get('/', (req, res) => {
     res.send('hola desde el home')
 });
 app.use(router);
-
 console.log(properties)
 
 const PORT = properties.PORT || 3300;

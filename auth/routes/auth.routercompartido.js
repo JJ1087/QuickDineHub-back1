@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-
 //compartido
 
 const correoController = require('../controllers/correo.controller');
@@ -8,7 +7,7 @@ const userRepartidor = require('../controllers/auth.controllerRepartidor');
 const User = require('../controllers/auth.controller'); // Importa el controlador de usuario
 const userRestaurante = require('../controllers/auth.controllerrestaurante');
 const logs = require('../controllers/auth.controllerLogs');
-
+const rutaPago = require('../controllers/pago.controller')
 
 module.exports = (router) => {
     router.post('/enviar-correo', correoController.enviarCorreo); // correo de verificacio-//compartido
@@ -36,5 +35,6 @@ module.exports = (router) => {
 
     router.post('/enviar-correo-cancelarproducto', correoController.correocancelarproducto);
     router.post('/enviar-correo-cancelarOrden', correoController.correocancelarorden);
-
+    router.post('/pago',rutaPago.getData);
+    router.post('/data-pago',rutaPago.saveCompra)
 }
