@@ -86,8 +86,10 @@ exports.loginUser = async(req, res, next) => {
                     nombre: user.nombre,
                     email: user.email,
                     rol: user.rol,
+                    id: user._id,
                     accessToken: accessToken,
                     expiresIn: expiresIn
+                    
                 }
 
                 // Aquí creamos un nuevo documento de acceso exitoso
