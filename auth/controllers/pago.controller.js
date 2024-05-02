@@ -40,7 +40,7 @@ exports.getData = async (req, res) => {
           installments: 1,
         },
         notification_url:
-        "https://af5a-189-240-192-130.ngrok-free.app/data-pago",
+        "https://931a-201-105-16-213.ngrok-free.app/data-pago",
       },
     })
     .then((data) => {
