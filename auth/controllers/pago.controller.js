@@ -43,7 +43,7 @@ exports.getData = async (req, res) => {
         },
         notification_url:
 
-        "https://9c10-2605-59c8-716b-5c10-2896-af0c-f0ba-85e2.ngrok-free.app/data-pago",
+        "https://2801-201-108-195-133.ngrok-free.app/data-pago",
 
       },
     })
