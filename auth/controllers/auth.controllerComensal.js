@@ -1,6 +1,6 @@
 const User = require('../models/auth.model');
 const Product = require('../models/auth.modelMenu'); // Importa el modelo de productos
-//Cambios de pruebas
+//Cambios de pruebas2
 
 const jwt = require('jsonwebtoken'); //Se requiere el jsaon web token para las incriptaciones de contraseñas
 const bcrypt = require('bcryptjs');
