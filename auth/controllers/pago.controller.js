@@ -25,6 +25,8 @@ exports.getData = async (req, res) => {
   const client = new mercadopago.MercadoPagoConfig({
     accessToken:
       "TEST-1175297249318297-030816-e2ab1189bd638ddccd10514d28dab4cb-1719437028",
+      //"TEST-683873455846638-042522-8e640b4abeb87d41232dc441453533b3-730816889",
+      
   });
 
   const preference = new mercadopago.Preference(client);
@@ -40,7 +42,9 @@ exports.getData = async (req, res) => {
           installments: 1,
         },
         notification_url:
-        "https://931a-201-105-16-213.ngrok-free.app/data-pago",
+
+        "https://9c10-2605-59c8-716b-5c10-2896-af0c-f0ba-85e2.ngrok-free.app/data-pago",
+
       },
     })
     .then((data) => {
@@ -57,6 +61,7 @@ exports.saveCompra = async (req, res) => {
   const client = new mercadopago.MercadoPagoConfig({
     accessToken:
       "TEST-1175297249318297-030816-e2ab1189bd638ddccd10514d28dab4cb-1719437028",
+      //"TEST-683873455846638-042522-8e640b4abeb87d41232dc441453533b3-730816889",
   });
   if (req.body.data !== undefined) {
     const data = new mercadopago.Payment(client).capture(req.body.data);
