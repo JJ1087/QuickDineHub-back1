@@ -9,7 +9,7 @@ const User = require('../controllers/auth.controller'); // Importa el controlado
 
 
 module.exports = (router) => {
-    router.post('/registro-cliente', Users.createUser);
+    router.post('/registro-cliente', Users.createUser);//s
     router.post('/login-clientes', Users.loginUser);//chico back
     // router.get('/cantidad-productos', Product.obtenerCantidadProductos);
     // router.get('/info-producto', Product.obtenerInfoDeProducto);

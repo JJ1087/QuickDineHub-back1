@@ -56,32 +56,25 @@ exports.createUser = async(req, res, next) => {
 
 // Recuperación de datos del formulario login
 exports.loginUser = async(req, res, next) => {
-    // Se obtienen los datos de usuario del cuerpo de la solicitud
     const userData = {
         email: req.body.email,
         password: req.body.password,
     };
 
-    // Se imprime en la consola los datos del usuario recibidos
     console.log('Lo que llego carnal: ', userData);
 
     try {
-        // Buscar que el usuario exista en la BD mediante el correo electrónico proporcionado
         const user = await User.findOne({ email: userData.email });
 
-        // Si no se encuentra ningún usuario con el correo electrónico proporcionado, se envía un mensaje de error
         if (!user) {
             res.status(409).send({ message: 'NO EXISTE USUARIO' });
         } else {
-            // Se compara la contraseña proporcionada con la contraseña almacenada en la base de datos
             const isPasswordValid = await bcrypt.compare(userData.password, user.contraseña);
 
-            // Si la contraseña es válida, se genera un token de acceso JWT y se envía como respuesta al cliente
             if (isPasswordValid) {
                 const expiresIn = 24 * 60 * 60;
                 const accessToken = jwt.sign({ id: user.id, rol: user.rol }, secret_key, { expiresIn: expiresIn });
 
-                // Se construye el objeto de datos del usuario a enviar al cliente
                 const dataUser = {
                     nombre: user.nombre,
                     email: user.email,
@@ -89,24 +82,20 @@ exports.loginUser = async(req, res, next) => {
                     id: user._id,
                     accessToken: accessToken,
                     expiresIn: expiresIn
-                    
                 }
 
-                // Aquí creamos un nuevo documento de acceso exitoso
                 const nuevoAccesoLog = new logacceso({
                     user_id: user._id,
                     email: userData.email,
                     inicioSesion: new Date(),
-                    intentosFallidos: 0 // No hubo intentos fallidos en este inicio de sesión
+                    intentosFallidos: 0
                 });
 
-                await nuevoAccesoLog.save(); // Guardamos el registro de acceso exitoso en la base de datos
+                await nuevoAccesoLog.save();
+                console.log(accessToken);
 
-
-                // Se envía la respuesta con los datos del usuario
                 res.send({ dataUser });
             } else {
-                // Si la contraseña no es válida, se envía un mensaje de error indicando que la contraseña es incorrecta
                 const datoUser = {
                     email: user.email,
                 }
@@ -114,11 +103,11 @@ exports.loginUser = async(req, res, next) => {
             }
         }
     } catch (error) {
-        // Si ocurre un error durante el proceso de autenticación, se maneja y se envía como respuesta un mensaje de error genérico
         console.error('Error al autenticar el usuario:', error);
         res.status(500).send('Error del servidor: ' + error.message);
     }
 };
+
 
 //---------------------------Treaer datos para el Menu
 // Obtener la cantidad de productos
