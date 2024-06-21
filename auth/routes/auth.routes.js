@@ -58,4 +58,12 @@ module.exports = (router) => {
 
     router.get('/restaurantes/nombres', User.obtenerRestaurantes);
 
+    // const users = [
+    //     { _id: '1', idRestaurante: 'R1', estadoOrden: 'Pendiente' },
+    //     { _id: '2', idRestaurante: 'R2', estadoOrden: 'Completado' },
+    // ];
+    // router.get('/users', (req, res) => {
+    //     res.json(users);
+    // });
+
 }
