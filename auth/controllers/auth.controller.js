@@ -237,7 +237,7 @@ exports.cambiarContraseña = async(req, res, next) => {
 exports.obtenerRestaurantes = async (req, res) => {
     try {
       const restaurantes = await Restaurant.find({}); // Obtener todos los datos de los restaurantes
-      res.status(200).json(restaurantes);
+      res.status(200).json(restaurantes);//Pruebas para skill
     } catch (error) {
       console.error('Error al obtener los restaurantes:', error);
       res.status(500).json({ message: 'Error interno del servidor' });
