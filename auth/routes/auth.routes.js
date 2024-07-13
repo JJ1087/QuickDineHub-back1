@@ -56,14 +56,11 @@ module.exports = (router) => {
     router.put('/comensales/:orderId/noProductos', Comensal.actualizarCantidadProductos);
     router.put('/ordenes/:id/actualizarEstado', logs.actualizarEstado2); 
 
-    router.get('/restaurantes/nombres', User.obtenerRestaurantes);
+    //RUTAS UTILIZADAS POR LA SKILL DE ALEXA
 
-    // const users = [
-    //     { _id: '1', idRestaurante: 'R1', estadoOrden: 'Pendiente' },
-    //     { _id: '2', idRestaurante: 'R2', estadoOrden: 'Completado' },
-    // ];
-    // router.get('/users', (req, res) => {
-    //     res.json(users);
-    // });
+    router.get('/restaurantes/nombres', User.obtenerRestaurantes);
+    router.get('/restaurantes/nombresPorCategoria/:categoria', User.obtenerRestaurantesPorCategoria);
+
+    
 
 }

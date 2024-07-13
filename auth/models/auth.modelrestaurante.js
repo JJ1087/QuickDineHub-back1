@@ -36,6 +36,8 @@ const userSchema = new Schema({
     //DATOS EXTRA
     descripcionRestaurant: { type: String, },
     logoRestaurant: { type: String,  },
+    //USADO PARA BUSQUEDA EN SKILL
+    categoria: { type: String,  }
 }, { timestamps: true, versionKey: false });
 
 module.exports = mongoose.model('usuariorestaurante', userSchema)

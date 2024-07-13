@@ -234,6 +234,8 @@ exports.cambiarContraseña = async(req, res, next) => {
     }
 };
 
+//Controladores usados por la skill----------------------------------------------------------------------
+
 exports.obtenerRestaurantes = async (req, res) => {
     try {
       const restaurantes = await Restaurant.find({}); // Obtener todos los datos de los restaurantes
@@ -241,6 +243,26 @@ exports.obtenerRestaurantes = async (req, res) => {
     } catch (error) {
       console.error('Error al obtener los restaurantes:', error);
       res.status(500).json({ message: 'Error interno del servidor' });
+    }
+};
+
+exports.obtenerRestaurantesPorCategoria = async (req, res, next) => {
+    try {
+        const categoria = req.params.categoria; // Obtiene el ID del restaurante del parámetro de la solicitud
+
+        console.log('Categoria del restaurante:', categoria);
+
+        // Busca todos los productos que coincidan con el ID del restaurante
+        const productos = await Restaurant.find({ categoria: categoria });
+
+        if (!productos || productos.length === 0) {
+            return res.status(404).json({ error: 'No se encontraron restaurantes con esta categoria' });
+        }
+
+        res.status(200).json(productos); // Devuelve los productos encontrados
+    } catch (error) {
+        console.error('Error al obtener los restaurantes:', error);
+        res.status(500).json({ error: 'Error del servidor al obtener la información de los restaurantes' });
     }
 };
 
