@@ -266,3 +266,25 @@ exports.obtenerRestaurantesPorCategoria = async (req, res, next) => {
     }
 };
 
+
+exports.obtenerInfoProductosConOfertas = async (req, res, next) => {
+    try {
+        const idRestaurante = req.params.id; // Obtiene el ID del restaurante del parámetro de la solicitud
+
+        console.log('ID del restaurante:', idRestaurante);
+
+        // Busca todos los productos que coincidan con el ID del restaurante y cuyo valor de "oferta" no sea "sin oferta"
+        const productos = await Product.find({ idRestaurante: idRestaurante, oferta: { $ne: 'null' } });
+
+        if (!productos || productos.length === 0) {
+            return res.status(404).json({ error: 'No se encontraron productos para este restaurante' });
+        }
+
+        res.status(200).json(productos); // Devuelve los productos encontrados
+    } catch (error) {
+        console.error('Error al obtener la información de los productos:', error);
+        res.status(500).json({ error: 'Error del servidor al obtener la información de los productos' });
+    }
+};
+
+

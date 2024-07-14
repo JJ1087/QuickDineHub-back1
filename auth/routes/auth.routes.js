@@ -60,6 +60,7 @@ module.exports = (router) => {
 
     router.get('/restaurantes/nombres', User.obtenerRestaurantes);
     router.get('/restaurantes/nombresPorCategoria/:categoria', User.obtenerRestaurantesPorCategoria);
+    router.get('/info-productosConOfertas/:id', User.obtenerInfoProductosConOfertas);
 
     
 
