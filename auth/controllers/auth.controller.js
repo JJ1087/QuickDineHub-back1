@@ -293,7 +293,7 @@ exports.guardarCarritoSkill = async(req, res, next) => {
         const { carrito } = req.body; // Obtener el carrito del cuerpo de la solicitud
 
         // Buscar al comensal por su token
-        const comensal = await User.find({ token: token });
+        const comensal = await User.findOne({ token: token });
 
         if (!comensal) {
             return res.status(404).json({ error: 'Comensal no encontrado' });
