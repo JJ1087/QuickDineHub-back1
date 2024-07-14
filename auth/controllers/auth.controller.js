@@ -341,3 +341,23 @@ exports.guardarCarritoSkill = async(req, res, next) => {
 
 };
 
+exports.obtenerInfoCarrito = async (req, res, next) => {
+    try {
+        const token = req.params.token; // Obtiene el token del parámetro de la solicitud
+
+        console.log('Token:', token);
+
+        // Busca el usuario que coincide con el token
+        const usuario = await User.findOne({ token: token });
+
+        if (!usuario) {
+            return res.status(404).json({ error: 'No se encontró el usuario con este token' });
+        }
+
+        res.status(200).json(usuario.carrito); // Devuelve el carrito del usuario encontrado
+    } catch (error) {
+        console.error('Error al obtener la información del carrito:', error);
+        res.status(500).json({ error: 'Error del servidor al obtener la información del carrito' });
+    }
+};
+

@@ -62,6 +62,7 @@ module.exports = (router) => {
     router.get('/restaurantes/nombresPorCategoria/:categoria', User.obtenerRestaurantesPorCategoria);
     router.get('/info-productosConOfertas/:id', User.obtenerInfoProductosConOfertas);
     router.post('/guardar-carritoSkill/:token', User.guardarCarritoSkill);
+    router.get('/info-Carrito/:token', User.obtenerInfoCarrito);
 
     
 
