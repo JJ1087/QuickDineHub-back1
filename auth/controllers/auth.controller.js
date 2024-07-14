@@ -329,7 +329,10 @@ exports.guardarCarritoSkill = async(req, res, next) => {
         console.log("COMO SALE EN Back SAVE: ", comensal);
 
         // Enviar una respuesta de éxito
-        res.status(200).json({ message: 'Carrito guardado exitosamente' });
+        //res.status(200).json({ message: 'Carrito guardado exitosamente' });
+
+        // Enviar una respuesta de éxito
+        res.status(200).json({ success: true, message: 'Carrito guardado exitosamente' });
     } catch (error) {
         // Manejar errores
         console.error('Error al guardar el carrito:', error);
