@@ -53,6 +53,10 @@ const userSchema = new Schema({
             }
         }],
         default: [] // Valor por defecto: un arreglo vacío
+    },
+    token: {
+        type: String,
+        default: ""
     }
 },{
     timestamps: true //guardar fecha de creacion y actualizacion de cuentas de usuario "NO REPUDIO"
