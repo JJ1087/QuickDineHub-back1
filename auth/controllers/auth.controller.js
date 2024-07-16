@@ -415,3 +415,59 @@ exports.guardarCarritoSkill2 = async(req, res, next) => {
     }
 
 };
+
+exports.guardarCarritoSkill3 = async(req, res, next) => {
+    try {
+        const token = req.params.token;
+        //const cantidad = req.params.cantidad; // Obtener el ID del comensal de los parámetros de la URL
+        const cantidad = parseInt(req.params.cantidad, 10); // Obtener la cantidad de los parámetros de la URL y convertirla a número
+        const { carrito } = req.body; // Obtener el carrito del cuerpo de la solicitud
+
+        // Buscar al comensal por su token
+        const comensal = await User.findOne({ token: token});
+
+        if (!comensal) {
+            return res.status(404).json({ error: 'Comensal no encontrado' });
+        }
+        // Verificar si todos los elementos del carrito tienen un ID de restaurante válido
+        if (carrito.some(item => !item.idRestaurante)) {
+            return res.status(400).json({ error: 'El ID del restaurante es obligatorio para todos los elementos del carrito' });
+        }
+
+        console.log("Lo que llega al Back: ", comensal);
+
+        // Actualizar el carrito del comensal con el nuevo arreglo
+        // Iterar sobre los elementos del nuevo carrito
+        carrito.forEach(item => {
+            // Buscar el índice del producto en el carrito actual
+            const index = comensal.carrito.findIndex(existingItem => String(existingItem.productId) === String(item.productId));
+            if (index !== -1) {
+                // Si el producto ya está en el carrito, actualizar sus propiedades
+                comensal.carrito[index].cantidad = cantidad || item.cantidad;
+                comensal.carrito[index].especificacion = item.especificacion;
+            } else {
+                // Si el producto no está en el carrito, agregarlo
+                comensal.carrito.push({ productId: item.productId, idRestaurante: item.idRestaurante, cantidad: cantidad || item.cantidad, especificacion: item.especificacion });
+            }
+        });
+
+        console.log("COMO SALE EN Back: ", comensal);
+
+
+        // Guardar los cambios en la base de datos
+        await comensal.save();
+
+        console.log("COMO SALE EN Back SAVE: ", comensal);
+
+        // Enviar una respuesta de éxito
+        //res.status(200).json({ message: 'Carrito guardado exitosamente' });
+
+        // Enviar una respuesta de éxito
+        res.status(200).json({ success: true, message: 'Carrito guardado exitosamente' });
+    } catch (error) {
+        // Manejar errores
+        console.error('Error al guardar el carrito:', error);
+        res.status(500).json({ error: 'Error del servidor al guardar el carrito' });
+    }
+
+};
