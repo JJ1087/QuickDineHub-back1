@@ -32,6 +32,7 @@ exports.createUserRes = async(req, res, next) => {
             direccionRestaurante: req.body.direccionRestaurante,
             contrasena: bcrypt.hashSync(req.body.contrasena), //Encriptacion de contraseña con hash
             numeroRestaurante: req.body.numeroRestaurante,
+            categoria: req.body.categoriaRestaurante,
             razonSocial: req.body.razonSocial,
             domicilioFiscal: req.body.domicilioFiscal,
             nombreTitular: req.body.nombreTitular,

@@ -408,10 +408,10 @@ exports.obtenercuentaBancoId = async(req, res, next) => {
 
 //NOTIFICACIONES-------------------------------------------------------------------------
 // Devolver las ORDENES del comensal para analizar si alguno necesita notificarse
-exports.obtenerOrdenes = async(req, res, next) => {
+exports.obtenerOrdenes = async (req, res, next) => {
     try {
         const idCliente = req.params.id;
-        console.log(idCliente)
+        console.log(idCliente);
         const direcciones = await Orden.find({ idCliente: idCliente });
 
         if (direcciones.length === 0) {

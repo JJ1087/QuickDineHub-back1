@@ -8,7 +8,7 @@ const Envio = require('../models/auth.modelInfoEnvio'); // Importa el modelo de 
 const Pago = require('../models/auth.modelInfoPago'); // Importa el modelo de pago
 const logacceso = require('../models/logs-Acceso'); //log acceso
 const Restaurant = require('../models/auth.modelrestaurante');
-//Funcion para registrar a los usuarios en la BD
+//Funcion para registrar a los usuarios en la BD de Quick
 exports.createUser = async(req, res, next) => {
     console.log('Datos recibidos del Front:', req.body);
     try {

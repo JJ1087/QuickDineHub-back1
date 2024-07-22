@@ -14,7 +14,8 @@ const userSchema = new Schema({
     direccionRestaurante: { type: String, required: true, },
     contrasena: { type: String, required: true, trim: true },
     numeroRestaurante: { type: String, required: true, },
-    razonSocial: { type: String, required: true, },
+    categoria:{ type: String, required: true, }, //Categorias
+    razonSocial:{ type: String, required: true, },
     domicilioFiscal: { type: String, required: true, },
     menuImagen: { type: String, required: true, },
     nombreTitular: { type: String, required: true, },
@@ -37,7 +38,6 @@ const userSchema = new Schema({
     descripcionRestaurant: { type: String, },
     logoRestaurant: { type: String,  },
     //USADO PARA BUSQUEDA EN SKILL
-    categoria: { type: String,  }
 }, { timestamps: true, versionKey: false });
 
 module.exports = mongoose.model('usuariorestaurante', userSchema)
