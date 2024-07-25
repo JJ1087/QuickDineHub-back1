@@ -18,13 +18,13 @@ exports.Crearproducto = async(req, res, next) => {
             idRestaurante: req.body.idRestaurante,
             nombre: req.body.nombre,
             descripcion: req.body.descripcion,
-            categoria: req.body.categoria,
+            categoria: 'Comida Regional Mexicana',
             tiempoP: req.body.tiempoP,
             precio: req.body.precio,
             etiquetas: etiquetasArray,
-            oferta: '00',
+            oferta: 'null',
             descuento: '00',
-            costoEnvio: '20',
+            costoEnvio: '10',
             imagen: req.files.map(file => file.path),
         });
         console.log('Lo que llego carnal: ', nuevoProducto);
