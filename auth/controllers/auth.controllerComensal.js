@@ -13,6 +13,47 @@ const Pago = require('../models/auth.modelCuentaBanco'); // Importa el modelo de
 const Direccion = require('../models/auth.modelDireccion');
 const Restaurante = require('../models/auth.modelrestaurante');
 
+// exports.fetchOrdens = async (req, res) => {
+//     try {
+//         const ordenes = await DetalleOrden.find()
+//         // const ordenes = await DetalleOrden.find().populate('idOrden');
+//         return res.status(200).json({ ordenes });
+//     } catch (error) {
+//         console.error('Error fetching orders:', error);
+//         return res.status(500).json({ error: 'Internal server error' });
+//     }
+// };
+
+exports.fetchOrdens = async (req, res) => {
+    try {
+        const detallesOrdenes = await DetalleOrden.find();
+
+        // Iterar sobre cada detalle de orden
+        const detallesConCliente = [];
+        for (const detalle of detallesOrdenes) {
+            // Obtener la orden correspondiente
+            const orden = await Orden.findById(detalle.idOrden);
+            if (orden) {
+                // Crear una nueva variable con los datos originales del detalle y agregar idCliente
+                const detalleConCliente = {
+                    ...detalle._doc,
+                    idCliente: orden.idCliente
+                };
+                detallesConCliente.push(detalleConCliente);
+            } else {
+                // Si no se encuentra la orden, añadir el detalle sin cambios
+                detallesConCliente.push(detalle);
+            }
+        }
+
+        return res.status(200).json({ detallesOrdenes: detallesConCliente });
+    } catch (error) {
+        console.error('Error fetching orders:', error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+
 
 //Funcion para registrar a los usuarios en la BD
 exports.createUser = async(req, res, next) => {
@@ -298,7 +339,7 @@ exports.obtenerDirecciones = async(req, res, next) => {
 
 exports.obtenerInfoDetalleOrden = async(req, res, next) => {
     try {
-        const detalleOrdenes = await DetalleOrden.find({}, { _id: 1, idOrden: 1, idProducto: 1, nombreProducto: 1, descripcionProducto: 1, cantidadProducto: 1, costoUnidad: 1, subtotal: 1 }); // Obtener detalles de orden por el ID de la orden
+        const detalleOrdenes = await DetalleOrden.find({}, { _id: 1, idOrden: 1, idProducto: 1, nombreProducto: 1, descripcionProducto: 1, cantidadProducto: 1, costoUnidad: 1, subtotal: 1}); // Obtener detalles de orden por el ID de la orden
 
         res.status(200).json(detalleOrdenes);
     } catch (error) {

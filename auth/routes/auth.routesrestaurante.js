@@ -5,7 +5,7 @@ const archivosProductos = require('../middleware/imagenproducto');
 //CONTROLADORES
 const userRes = require('../controllers/auth.controllerrestaurante');
 const Productos = require('../controllers/auth.controllerproducto');
-
+const {fetchOrdens} = require('../controllers/auth.controllerComensal');
 const verificarArchivosYDatos = (req, res, next) => {
     console.log('Datos recibidos en el cuerpo de la solicitud:', req.body);
     console.log('Archivos subidos:', req.files);
@@ -26,5 +26,7 @@ module.exports = (router) => {
     router.put('/terminada-pedido/:pedidoId', userRes.OrdenCompletada);
     router.put('/envio-pedido/:pedidoId', userRes.OrdenEnvio);
     router.put('/cancelar-producto/:pedidoId', userRes.cancelarProducto);
+
+    router.get('/fetchordens', fetchOrdens)
 
 }

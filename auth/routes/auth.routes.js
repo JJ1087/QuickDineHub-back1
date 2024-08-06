@@ -65,6 +65,9 @@ module.exports = (router) => {
     router.get('/info-Carrito/:token', User.obtenerInfoCarrito);
     router.post('/guardar-carritoSkill/:token/:number', User.guardarCarritoSkill2);
     router.post('/guardar-carritoSkill2/:token/:cantidad', User.guardarCarritoSkill3);
+
+    //RUTAS UTILIZADAS Recomendacion
+
     
 
 }
