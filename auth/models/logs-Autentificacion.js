@@ -15,6 +15,6 @@ const autentificacionSchema = new Schema({
 },{
     timestamps: true //guardar fecha de creacion y actualizacion de cuentas de usuario "NO REPUDIO"
 
-});
+}); 
 
 module.exports = mongoose.model('autentificacionLogs', autentificacionSchema)

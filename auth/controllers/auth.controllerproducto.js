@@ -22,7 +22,7 @@ exports.Crearproducto = async(req, res, next) => {
             tiempoP: req.body.tiempoP,
             precio: req.body.precio,
             etiquetas: etiquetasArray,
-            oferta: 'null',
+            oferta: '30% descuento',
             descuento: '00',
             costoEnvio: '10',
             imagen: req.files.map(file => file.path),
