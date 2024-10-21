@@ -25,8 +25,12 @@ module.exports = (router) => {
     router.put('/rechazar-pedido/:pedidoId', userRes.rechazarOrden);
     router.put('/terminada-pedido/:pedidoId', userRes.OrdenCompletada);
     router.put('/envio-pedido/:pedidoId', userRes.OrdenEnvio);
-    router.put('/cancelar-producto/:pedidoId', userRes.cancelarProducto);
+    router.put('/cancelar-producto/:pedidoId', userRes.cancelarProducto);//cancelar producto
 
+    router.post('/comprasRealizadasSitio', userRes.agregarventasitio);//ordenes por compras en linea
+
+    router.get('/compras-realizada/:idRestaurante', userRes.obtenerComprasPorRestaurante);// mostrar compras en linea
+    
     router.get('/fetchordens', fetchOrdens)
 
 }

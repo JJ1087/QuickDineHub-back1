@@ -3,6 +3,7 @@ const Ordenes = require('../models/auth.modelOrden');
 const Cliente = require('../models/auth.model');
 const Detalle = require('../models/auth.modelDetalleOrden');
 const DatoDireccion = require('../models/auth.modelDireccion');
+const ComprasRealizadas = require('../models/auth.modelVentaRes');
 
 const jwt = require('jsonwebtoken'); //Se requiere eljsaon web token para las incriptaciones de contraseñas
 const bcrypt = require('bcryptjs');
@@ -363,5 +364,50 @@ exports.cancelarProducto = async(req, res, next) => {
     } catch (error) {
         console.error('Error al cancelar el producto del pedido:', error);
         res.status(500).json({ error: 'Error al cancelar el producto del pedido' });
+    }
+};
+
+exports.agregarventasitio = async (req, res, next) => {
+    const { pedidoId } = req.body;
+    try {
+        // Busca la orden correspondiente
+        const orden = await Ordenes.findById(pedidoId).exec();
+        if (!orden) {
+            return res.status(404).json({ error: 'Pedido no encontrado' });
+        }
+
+        // Busca los detalles de la orden
+        const detallesOrden = await Detalle.find({ idOrden: pedidoId }).exec();
+
+        // Crea las nuevas compras realizadas
+        const compras = detallesOrden.map(detalle => ({
+            idPedido: orden._id,
+            idCliente: orden.idCliente,
+            idRestaurante: orden.idRestaurante,
+            nombreProducto: detalle.nombreProducto,
+            cantidadProducto: detalle.cantidadProducto,
+            precioTotal: orden.precioTotal,
+            fechaHoraEntrega: orden.fechaHoraEntrega,
+            direccion: 'remoto'
+        }));
+
+        // Guarda las nuevas compras realizadas en la colección
+        const comprasRealizadas = await ComprasRealizadas.insertMany(compras);
+        res.status(201).json(comprasRealizadas);
+
+    } catch (error) {
+        console.error('Error al registrar la compra realizada:', error);
+        res.status(500).json({ error: 'Error al registrar la compra realizada' });
+    }
+};
+
+exports.obtenerComprasPorRestaurante = async (req, res, next) => {
+    const { idRestaurante } = req.params; // Obtener el ID del restaurante de los parámetros de la URL
+    try {
+        const compras = await ComprasRealizadas.find({ idRestaurante }).exec();
+        res.status(200).json(compras);
+    } catch (error) {
+        console.error('Error al obtener compras realizadas:', error);
+        res.status(500).json({ error: 'Error al obtener compras realizadas' });
     }
 };
