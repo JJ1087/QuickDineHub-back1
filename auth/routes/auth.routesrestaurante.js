@@ -2,10 +2,12 @@ const express = require('express');
 //MIDELWARES
 const archivosRes = require('../middleware/imagenrestaurante');
 const archivosProductos = require('../middleware/imagenproducto');
+const archivosofertas = require('../middleware/imagenoferta');
 //CONTROLADORES
 const userRes = require('../controllers/auth.controllerrestaurante');
 const Productos = require('../controllers/auth.controllerproducto');
 const {fetchOrdens} = require('../controllers/auth.controllerComensal');
+
 const verificarArchivosYDatos = (req, res, next) => {
     console.log('Datos recibidos en el cuerpo de la solicitud:', req.body);
     console.log('Archivos subidos:', req.files);
@@ -18,6 +20,12 @@ module.exports = (router) => {
     router.post('/crear-producto', archivosProductos, verificarArchivosYDatos, Productos.Crearproducto);
     router.get('/mostrar-producto/:restauranteId', Productos.mostrarproducto);
     router.delete('/eliminar-producto/:id', Productos.eliminarProducto);
+    //ofertas
+    router.post('/crear-oferta', archivosofertas, verificarArchivosYDatos, Productos.Crearoferta);
+    router.get('/mostrar-oferta/:restauranteId', Productos.mostraroferta); 
+    router.delete('/eliminar-oferta/:id', Productos.eliminarOferta);
+    router.get('/mostrar-oferta2', Productos.obtenerInfoOferta);
+
     // PEDIDOS
     router.get('/mostrar-pedido/:restauranteId', userRes.mostrarpedido);
 
