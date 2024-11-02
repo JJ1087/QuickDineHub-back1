@@ -66,7 +66,9 @@ module.exports = (router) => {
     router.post('/guardar-carritoSkill/:token/:number', User.guardarCarritoSkill2);
     router.post('/guardar-carritoSkill2/:token/:cantidad', User.guardarCarritoSkill3);
 
-    //RUTAS UTILIZADAS Recomendacion
+    //RUTAS UTILIZADAS desde la APP movil
+    router.get('/carrito/:userId', Comensal.obtenerInfoComensalConProductos);
+
 
     
 

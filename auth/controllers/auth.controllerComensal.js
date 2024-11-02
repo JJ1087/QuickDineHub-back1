@@ -687,3 +687,48 @@ exports.actualizarCantidadProductos = async(req, res, next) => {
         res.status(500).json({ error: 'Error del servidor al actualizar la cantidad del producto en el carrito' });
     }
 };
+
+//---------------------------Controller utilizada en la APP MOVIL-------------------
+
+exports.obtenerInfoComensalConProductos = async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const comensal = await User.findById(userId).lean();
+
+        if (!comensal) {
+            return res.status(404).json({ error: 'Comensal no encontrado' });
+        }
+
+        const productIds = comensal.carrito.map(item => item.productId);
+
+        const products = await Product.find(
+            { _id: { $in: productIds } },
+            { _id: 1, imagen: 1, nombre: 1, descripcion: 1, precio: 1 }
+        ).lean();
+
+        const productMap = products.reduce((acc, product) => {
+            acc[product._id.toString()] = product;
+            return acc;
+        }, {});
+
+        const carritoConDetalles = comensal.carrito.map(item => {
+            const productInfo = productMap[item.productId.toString()] || {};
+            return {
+                productId: item.productId,
+                cantidad: item.cantidad,
+                especificacion: item.especificacion,
+                subtotal: (productInfo.precio || 0) * item.cantidad,
+                nombreProducto: productInfo.nombre || 'Producto no encontrado',
+                precio: productInfo.precio || 0,
+                imagen: productInfo.imagen || [],
+                descripcion: productInfo.descripcion || 'Sin descripción'
+            };
+        });
+
+        res.status(200).json({ carrito: carritoConDetalles });
+    } catch (error) {
+        console.error('Error al obtener información del carrito y productos:', error);
+        res.status(500).json({ error: 'Error del servidor' });
+    }
+};
+
