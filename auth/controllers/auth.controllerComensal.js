@@ -732,3 +732,24 @@ exports.obtenerInfoComensalConProductos = async (req, res) => {
     }
 };
 
+exports.obtenerInfoDeProductosPorIds = async (req, res, next) => {
+    try {
+        const { ids } = req.body;
+        
+        // Convertir los IDs a ObjectId
+        const objectIds = ids.map(id => new ObjectId(id));
+        
+        // Buscar los productos que correspondan a los IDs
+        const products = await Product.find({ _id: { $in: objectIds } });
+        
+        if (!products.length) {
+            return res.status(404).json({ error: 'Productos no encontrados' });
+        }
+        
+        res.status(200).json(products);
+    } catch (error) {
+        console.error('Error al obtener la información de los productos:', error);
+        res.status(500).json({ error: 'Error del servidor al obtener la información de los productos' });
+    }
+};
+

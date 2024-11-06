@@ -20,6 +20,8 @@ module.exports = (router) => {
     router.get('/cantidad-productos', Comensal.obtenerCantidadProductos); 
     router.get('/info-producto1', Comensal.obtenerInfoDeProducto);    
     router.get('/info-producto/:id', Comensal.obtenerInfoDeProductoPorId);
+    
+
     router.get('/info-productoPorRestaurante/:id', Comensal.obtenerInfoProductoPorRestaurante);
 
     router.post('/crear-orden', Comensal.crearOrden); // Nueva ruta para insertar información de la orden general
@@ -68,6 +70,7 @@ module.exports = (router) => {
 
     //RUTAS UTILIZADAS desde la APP movil
     router.get('/carrito/:userId', Comensal.obtenerInfoComensalConProductos);
+    router.post('/info-productosIds', Comensal.obtenerInfoDeProductosPorIds);//Usado por la movil
 
 
     
