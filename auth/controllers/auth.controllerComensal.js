@@ -1,6 +1,8 @@
 const User = require('../models/auth.model');
 const Product = require('../models/auth.modelMenu'); // Importa el modelo de productos
 //Cambios de pruebas2
+const Stripe = require('stripe');
+const stripe = Stripe('sk_test_51QJ0RlF5yxkLL8z90CXC9yjWhL81y5MLWeI0ciqaHzo0mmueI2VHyVQxgMbBvdf7nWyRX6s5YoJRpZKlRP1JxSa700E5bzkuzF');
 
 const jwt = require('jsonwebtoken'); //Se requiere el jsaon web token para las incriptaciones de contraseñas
 const bcrypt = require('bcryptjs');
@@ -732,24 +734,63 @@ exports.obtenerInfoComensalConProductos = async (req, res) => {
     }
 };
 
-exports.obtenerInfoDeProductosPorIds = async (req, res, next) => {
-    try {
-        const { ids } = req.body;
-        
-        // Convertir los IDs a ObjectId
-        const objectIds = ids.map(id => new ObjectId(id));
-        
-        // Buscar los productos que correspondan a los IDs
-        const products = await Product.find({ _id: { $in: objectIds } });
-        
-        if (!products.length) {
-            return res.status(404).json({ error: 'Productos no encontrados' });
+    exports.obtenerInfoDeProductosPorIds = async (req, res, next) => {
+        try {
+            const { ids } = req.body;
+            
+            // Convertir los IDs a ObjectId
+            const objectIds = ids.map(id => new ObjectId(id));
+            
+            // Buscar los productos que correspondan a los IDs
+            const products = await Product.find({ _id: { $in: objectIds } });
+            
+            if (!products.length) {
+                return res.status(404).json({ error: 'Productos no encontrados' });
+            }
+            
+            res.status(200).json(products);
+        } catch (error) {
+            console.error('Error al obtener la información de los productos:', error);
+            res.status(500).json({ error: 'Error del servidor al obtener la información de los productos' });
         }
-        
-        res.status(200).json(products);
-    } catch (error) {
-        console.error('Error al obtener la información de los productos:', error);
-        res.status(500).json({ error: 'Error del servidor al obtener la información de los productos' });
-    }
-};
+    };
 
+    exports.crearPaymentSheet = async (req, res, next) => {
+        try {
+            const data = req.body;
+            console.log(req.body);
+            
+            const params = {
+                email: data.email,
+                name: data.name,
+            };
+            
+            const customer = await stripe.customers.create(params);
+            console.log(customer.id);
+    
+            const ephemeralKey = await stripe.ephemeralKeys.create(
+                { customer: customer.id },
+                { apiVersion: '2020-08-27' }
+            );
+    
+            const paymentIntent = await stripe.paymentIntents.create({
+                amount: parseInt(data.amount),
+                currency: data.currency,
+                customer: customer.id,
+                automatic_payment_methods: {
+                    enabled: true,
+                },
+            });
+    
+            const response = {
+                paymentIntent: paymentIntent.client_secret,
+                ephemeralKey: ephemeralKey.secret,
+                customer: customer.id,
+            };
+    
+            res.status(200).send(response);
+        } catch (error) {
+            console.error('Error al crear el Payment Sheet:', error);
+            res.status(500).json({ error: 'Error del servidor al crear el Payment Sheet' });
+        }
+    };
