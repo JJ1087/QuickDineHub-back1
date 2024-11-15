@@ -8,6 +8,8 @@ const Envio = require('../models/auth.modelInfoEnvio'); // Importa el modelo de 
 const Pago = require('../models/auth.modelInfoPago'); // Importa el modelo de pago
 const logacceso = require('../models/logs-Acceso'); //log acceso
 const Restaurant = require('../models/auth.modelrestaurante');
+const Admin = require('../models/auth.modelAdmin');
+
 //Funcion para registrar a los usuarios en la BD de Quick
 exports.createUser = async(req, res, next) => {
     console.log('Datos recibidos del Front:', req.body);
@@ -39,6 +41,44 @@ exports.createUser = async(req, res, next) => {
 
         // Responder con éxito y el usuario creado
         res.status(201).json({ message: 'Usuario creado correctamente. Se ha enviado un correo de verificación.' });
+
+    } catch (err) {
+        // Manejar errores
+        console.error(err);
+        if (err.code === 11000) {
+            return res.status(409).json({
+                error: `El correo ${req.body.correo} ya está registrado en el sistema. Inicia sesión o utiliza un correo electrónico diferente.`
+            });
+        }
+        res.status(500).json({ error: err.message });
+    }
+};
+
+exports.createAdmin = async(req, res, next) => {
+    console.log('Datos recibidos del Front:', req.body);
+    try {
+        const { email } = req.body;
+        const existingUser = await Admin.findOne({ email });
+        if (existingUser) {
+            return res.status(409).json({
+                message: `El correo ${email} se encuentra registrado`,
+            });
+        }
+
+        // Crear nuevo usuario
+        const admin = new Admin({
+            nombre: req.body.nombre,
+            email: req.body.email,
+            contrasena: bcrypt.hashSync(req.body.contrasena), //Encriptacion de contraseña con hash
+            rol: 'comensal',
+
+        });
+
+        // Guardar el usuario en la base de datos
+        await admin.save();
+
+        // Responder con éxito y el usuario creado
+        res.status(201).json({ message: 'admin creado correctamente. Se ha enviado un correo de verificación.' });
 
     } catch (err) {
         // Manejar errores

@@ -17,6 +17,7 @@ const Restaurante = require('../models/auth.modelrestaurante');
 
 const FeedBack = require('../models/auth.modelFeedBack');
 
+
 // exports.fetchOrdens = async (req, res) => {
 //     try {
 //         const ordenes = await DetalleOrden.find()
@@ -173,6 +174,23 @@ exports.obtenerInfoDeProducto = async(req, res, next) => {
         res.status(500).json({ error: 'Error del servidor al obtener la información de los productos' });
     }
 };
+
+// Obtener la información de todos los productos
+exports.obtenerInfoFeedback = async (req, res, next) => {
+    try {
+      const feedbacks = await FeedBack.find({}, { 
+        _id: 1,  
+        respuestaUno: 1, 
+        respuestaDos: 1, 
+        respuestaTres: 1 
+      });
+  
+      res.status(200).json(feedbacks);
+    } catch (error) {
+      console.error('Error al obtener la información de los feedbacks:', error);
+      res.status(500).json({ error: 'Error del servidor al obtener la información de los feedbacks' });
+    }
+  };
 
 
 

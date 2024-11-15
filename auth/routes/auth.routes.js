@@ -10,6 +10,7 @@ const User = require('../controllers/auth.controller'); // Importa el controlado
 
 module.exports = (router) => {
     router.post('/registro-cliente', Users.createUser);//
+    router.post('/registro-admin', Users.createAdmin);
     router.post('/login-clientes', Users.loginUser);//chico back
     // router.get('/cantidad-productos', Product.obtenerCantidadProductos);
     // router.get('/info-producto', Product.obtenerInfoDeProducto);
@@ -18,7 +19,8 @@ module.exports = (router) => {
     // router.post('/insertar-info-pago', Users.insertarInfoPago); // Nueva ruta para insertar información de pago
 
     router.get('/cantidad-productos', Comensal.obtenerCantidadProductos); 
-    router.get('/info-producto1', Comensal.obtenerInfoDeProducto);    
+    router.get('/info-producto1', Comensal.obtenerInfoDeProducto);
+    router.get('/info-feedback', Comensal.obtenerInfoFeedback);    
     router.get('/info-producto/:id', Comensal.obtenerInfoDeProductoPorId);
     
 
