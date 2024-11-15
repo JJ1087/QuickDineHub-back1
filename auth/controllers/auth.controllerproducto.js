@@ -1,13 +1,71 @@
-
 const Producto = require('../models/auth.modelMenu');
 const oferta = require('../models/auth.modelOferta');
+const PushSubscription = require('../models/auth.modelpushsubscription'); // Modelo de suscripciones
 const mongoose = require('mongoose');
 const path = require('path');
 const fs = require('fs');
-//PRODUCTOS:
-//Funcion para registrar a los restaurantes en la BD
-exports.Crearproducto = async(req, res, next) => {
+const webpush = require('web-push');
 
+// Claves VAPID para Web Push (asegúrate de obtener las correctas desde tu servicio de Push)
+// Configurar las claves VAPID
+const vapidKeys = {
+    publicKey: "BOpKJl1P-s-gcH5dhTqjzF6-KbB-D8lenn3kYMhhpvGEq1TLSFUpaOa6698F5ZLg0yGVbLqSBdhvuO7I94m8cMc",
+    privateKey: "9HeLyr98wdMf1-sXyF5aducGyykqDP-D69nzIp1BgOA"
+};
+
+// Establecer las claves VAPID
+webpush.setVapidDetails(
+    'mailto:example@yourdomain.org',
+    vapidKeys.publicKey,
+    vapidKeys.privateKey
+);
+
+const getBaseUrl = () => {
+    if (process.env.NODE_ENV === 'production') {
+        // En producción (Render, por ejemplo), usamos la URL pública de tu servidor
+        return 'https://quickdinehub-back1.onrender.com';  // URL de tu API en Render
+    } else {
+        // En desarrollo (localhost), usamos la URL de tu servidor local
+        return 'http://localhost:3000';  // URL de tu API en local
+    }
+};
+
+// Función para enviar notificación
+const enviarNotificacion = (title, body, imagenProducto, url) => {
+    const baseUrl = getBaseUrl();
+    const payload = {
+        notification: {
+            title: title,
+            body: body,
+            icon: 'https://res.cloudinary.com/dnzbkzkrp/image/upload/v1731285748/jh3vyvlbcscpdl9muco3.png', // Icono fijo para las notificaciones
+            image: `${baseUrl}/${imagenProducto.replace(/\\/g, '/')}`, // Usar la imagen específica del producto o oferta
+            vibrate: [100, 50, 100],
+            actions: [{
+                action: "explore",
+                title: "Ver Oferta o Producto",
+                url: url
+            }]
+        }
+    };
+
+    // Obtener todas las suscripciones de usuarios
+    PushSubscription.find()
+        .exec()
+        .then(subscriptions => {
+            subscriptions.forEach(subscription => {
+                webpush.sendNotification(subscription, JSON.stringify(payload))
+                    .catch(err => {
+                        console.error('Error al enviar notificación:', err);
+                    });
+            });
+        })
+        .catch(err => {
+            console.error('Error al obtener suscripciones:', err);
+        });
+};
+
+// Crear un producto
+exports.Crearproducto = async (req, res, next) => {
     try {
         console.log('Datos recibidos del Front:', req.body);
 
@@ -29,83 +87,74 @@ exports.Crearproducto = async(req, res, next) => {
             costoEnvio: '10',
             imagen: req.files.map(file => file.path),
         });
-        console.log('Lo que llego carnal: ', nuevoProducto);
 
-        // Guardar el usuario en la base de datos
+        // Guardar el producto en la base de datos
         await nuevoProducto.save();
 
-        // Responder con éxito y el usuario creado
-        res.status(201).json({ message: 'PRODUCTO CREADO' });
+        // Enviar notificación de producto creado
+        enviarNotificacion(
+            `Nuevo Producto para ti en ! ${req.body.nombrerestaurante} !`,
+            `${req.body.nombre}: ${req.body.descripcion} - $${req.body.precio}`,
+            req.files[0].path, // Usamos la primera imagen como la imagen del producto
+            "https://quickdinehub-front1.web.app/login-clientes" // URL donde pueden ver más detalles
+        );
 
+        res.status(201).json({ message: 'PRODUCTO CREADO' });
     } catch (err) {
-        // Manejar errores
         console.error(err);
         res.status(500).json({ error: 'ERROR INESPERADO' });
     }
-
 };
 
-// Función para mostrar todos los productos
-exports.mostrarproducto = async(req, res, next) => {
+// Mostrar todos los productos de un restaurante
+exports.mostrarproducto = async (req, res, next) => {
     try {
-        // Obtener todos los productos de la base de datos
         const productos = await Producto.find({ idRestaurante: req.params.restauranteId });
 
-        // Convertir el tipo Decimal128 del precio a un tipo de dato más adecuado, como un número de punto flotante
         const productosModificados = productos.map(producto => ({
             ...producto.toObject(),
-            precio: parseFloat(producto.precio.toString()), // Convertir Decimal128 a cadena y luego a número de punto flotante
+            precio: parseFloat(producto.precio.toString()), // Convertir Decimal128 a número
             descuento: parseFloat(producto.descuento.toString())
         }));
 
-        // Responder con los productos encontrados
         res.status(200).json(productosModificados);
     } catch (err) {
-        // Manejar errores
         console.error(err);
-        res
-            .status(500).json({ error: 'ERROR INESPERADO' });
+        res.status(500).json({ error: 'ERROR INESPERADO' });
     }
 };
 
-exports.eliminarProducto = async(req, res) => {
+// Eliminar producto
+exports.eliminarProducto = async (req, res) => {
     try {
-        // Obtén el ID del producto de los parámetros de la solicitud
         const { id } = req.params;
-        console.log('Datos recibidos del Front:', req.params);
 
-        // Busca el producto por su ID en la base de datos
         const producto = await Producto.findById(id);
-        console.log('Datos de la BD', producto);
 
-        // Verifica si el producto existe
         if (!producto) {
             return res.status(404).json({ mensaje: 'El producto no fue encontrado' });
-        } else if (producto) {
-            // Elimina las imágenes asociadas al producto del sistema de archivos
-            producto.imagen.forEach(imagen => {
-                const imagePath = path.join(__dirname, '..', '..', imagen.replace(/\\/g, '/'));
-                console.log('ruta:  ', imagePath)
-                fs.unlinkSync(imagePath);
-            });
-
-            // Elimina el producto de la base de datos
-            await Producto.findByIdAndDelete(id);
         }
-        // Envía una respuesta de éxito
-        return res.status(200).json({ mensaje: 'Producto eliminado correctamente' });
+
+        // Eliminar imágenes asociadas al producto
+        producto.imagen.forEach(imagen => {
+            const imagePath = path.join(__dirname, '..', '..', imagen.replace(/\\/g, '/'));
+            fs.unlinkSync(imagePath);
+        });
+
+        await Producto.findByIdAndDelete(id);
+
+        res.status(200).json({ mensaje: 'Producto eliminado correctamente' });
     } catch (error) {
         console.error('Error al eliminar el producto:', error);
-        return res.status(500).json({ mensaje: 'Hubo un error al eliminar el producto' });
+        res.status(500).json({ mensaje: 'Hubo un error al eliminar el producto' });
     }
 };
-//OFERTAS
-exports.Crearoferta= async(req, res, next) => {
 
+// Crear oferta
+exports.Crearoferta = async (req, res, next) => {
     try {
         console.log('Datos recibidos del Front:', req.body);
 
-        // Crear nuevo producto
         const nuevaOferta = new oferta({
             _id: new mongoose.Types.ObjectId(),
             idRestaurante: req.body.idRestaurante,
@@ -117,93 +166,85 @@ exports.Crearoferta= async(req, res, next) => {
             precioOferta: req.body.precioOferta,
             imagen: req.files.map(file => file.path),
         });
-        console.log('Lo que llego carnal: ', nuevaOferta);
 
-        // Guardar el usuario en la base de datos
+        // Guardar la oferta en la base de datos
         await nuevaOferta.save();
 
-        // Responder con éxito y el usuario creado
-        res.status(201).json({ message: 'OFERTA CREADO' });
+        // Enviar notificación de oferta creada
+        enviarNotificacion(
+            `¡Aprovecha Nueva Oferta en ${req.body.nombrerestaurante}! `,
+            `${req.body.titulo}: ${req.body.descripcion} - De $${req.body.precioOriginal} a $${req.body.precioOferta}`,
+            req.files[0].path, // Usamos la primera imagen como la imagen de la oferta
+            "https://quickdinehub-front1.web.app/login-clientes" // URL donde pueden ver más detalles
+        );
 
+        res.status(201).json({ message: 'OFERTA CREADA' });
     } catch (err) {
-        // Manejar errores
         console.error(err);
         res.status(500).json({ error: 'ERROR INESPERADO' });
     }
-
 };
 
-// Función para mostrar todos los productos
-exports.mostraroferta = async(req, res, next) => {
+// Mostrar ofertas de un restaurante
+exports.mostraroferta = async (req, res, next) => {
     try {
-        // Obtener todos los productos de la base de datos
         const ofertas = await oferta.find({ idRestaurante: req.params.restauranteId });
 
-        // Convertir el tipo Decimal128 del precio a un tipo de dato más adecuado, como un número de punto flotante
         const ofertasModificados = ofertas.map(oferta => ({
             ...oferta.toObject(),
-            precioOriginal: parseFloat(oferta.precioOriginal.toString()), // Convertir Decimal128 a cadena y luego a número de punto flotante
+            precioOriginal: parseFloat(oferta.precioOriginal.toString()),
             precioOferta: parseFloat(oferta.precioOferta.toString())
         }));
 
-        // Responder con los productos encontrados
         res.status(200).json(ofertasModificados);
     } catch (err) {
-        // Manejar errores
         console.error(err);
-        res
-            .status(500).json({ error: 'ERROR INESPERADO' });
+        res.status(500).json({ error: 'ERROR INESPERADO' });
     }
 };
 
-exports.eliminarOferta = async(req, res) => {
+// Eliminar oferta
+exports.eliminarOferta = async (req, res) => {
     try {
-        // Obtén el ID del producto de los parámetros de la solicitud
         const { id } = req.params;
-        console.log('Datos recibidos del Front:', req.params);
 
-        // Busca el producto por su ID en la base de datos
-        const Oferta = await oferta.findById(id);
-        console.log('Datos de la BD', Oferta);
+        const ofertaData = await oferta.findById(id);
 
-        // Verifica si el producto existe
-        if (!Oferta) {
-            return res.status(404).json({ mensaje: 'El producto no fue encontrado' });
-        } else if (Oferta) {
-            // Elimina las imágenes asociadas al producto del sistema de archivos
-            Oferta.imagen.forEach(imagen => {
-                const imagePath = path.join(__dirname, '..', '..', imagen.replace(/\\/g, '/'));
-                console.log('ruta:  ', imagePath)
-                fs.unlinkSync(imagePath);
-            });
-
-            // Elimina el producto de la base de datos
-            await oferta.findByIdAndDelete(id);
+        if (!ofertaData) {
+            return res.status(404).json({ mensaje: 'La oferta no fue encontrada' });
         }
-        // Envía una respuesta de éxito
-        return res.status(200).json({ mensaje: 'Producto eliminado correctamente' });
+
+        ofertaData.imagen.forEach(imagen => {
+            const imagePath = path.join(__dirname, '..', '..', imagen.replace(/\\/g, '/'));
+            fs.unlinkSync(imagePath);
+        });
+
+        await oferta.findByIdAndDelete(id);
+
+        res.status(200).json({ mensaje: 'Oferta eliminada correctamente' });
     } catch (error) {
-        console.error('Error al eliminar el producto:', error);
-        return res.status(500).json({ mensaje: 'Hubo un error al eliminar el producto' });
+        console.error('Error al eliminar la oferta:', error);
+        res.status(500).json({ mensaje: 'Hubo un error al eliminar la oferta' });
     }
 };
 
-//INFO DE OFERTA A CLIENTE:
-// Obtener la información de todos los productos
-exports.obtenerInfoOferta = async(req, res, next) => {
+// Obtener información de todas las ofertas para los clientes
+exports.obtenerInfoOferta = async (req, res, next) => {
     try {
-        const ofertas = await oferta.find({}, { _id: 1,titulo:1, imagen: 1, nombrerestaurante: 1, descripcion: 1, TipoOferta: 1, precioOriginal: 1, precioOferta: 1 }); // Incluir el _id y los demás campos en la respuesta
-        // Asegurémonos de que cada producto tenga el campo 'imagen' como un arreglo incluso si está vacío
+        const ofertas = await oferta.find({}, { _id: 1, titulo: 1, imagen: 1, nombrerestaurante: 1, descripcion: 1, TipoOferta: 1, precioOriginal: 1, precioOferta: 1 });
+
         const ofertasModificados = ofertas.map(oferta => ({
             ...oferta.toObject(),
-            precioOriginal: parseFloat(oferta.precioOriginal.toString()), // Convertir Decimal128 a cadena y luego a número de punto flotante
+            precioOriginal: parseFloat(oferta.precioOriginal.toString()),
             precioOferta: parseFloat(oferta.precioOferta.toString())
         }));
+
         ofertas.forEach(ofert => {
             if (!Array.isArray(ofert.imagen)) {
                 ofert.imagen = [];
             }
         });
+
         res.status(200).json(ofertasModificados);
     } catch (error) {
         console.error('Error al obtener la información de productos:', error);

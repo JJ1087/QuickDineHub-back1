@@ -7,8 +7,8 @@ const userRepartidor = require('../controllers/auth.controllerRepartidor');
 const User = require('../controllers/auth.controller'); // Importa el controlador de usuario
 const userRestaurante = require('../controllers/auth.controllerrestaurante');
 const logs = require('../controllers/auth.controllerLogs');
-const rutaPago = require('../controllers/pago.controller')
-
+const rutaPago = require('../controllers/pago.controller');
+const pushSubscriptionController = require('../controllers/auth.controllerPushSubscription');
 module.exports = (router) => {
     router.post('/enviar-correo', correoController.enviarCorreo); // correo de verificacio-//compartido
 
@@ -27,7 +27,6 @@ module.exports = (router) => {
     router.get('/obtener-intentos-fallidos', logs.obtenerIntentosFallidos);
 
 
-
     router.post('/enviar-correo-advertencia', correoController.enviarCorreoAdvertencia);
     router.post('/enviar-correo-bloqueo', correoController.enviarCorreBloqueo);
 
@@ -37,4 +36,12 @@ module.exports = (router) => {
     router.post('/enviar-correo-cancelarOrden', correoController.correocancelarorden);
     router.post('/pago',rutaPago.getData);
     router.post('/data-pago',rutaPago.saveCompra)
+
+    //RUTAS 
+
+router.post('/pushSubscription/guardar/', pushSubscriptionController.createSubscription);
+
+
+router.post('/pushSubscription/enviar', pushSubscriptionController.enviarNotificacion);
+
 }
