@@ -828,3 +828,28 @@ exports.obtenerInfoComensalConProductos = async (req, res) => {
             res.status(500).json({ error: 'Error del servidor al registrar feedback' });
         }
     };
+
+    exports.existeFeedBack = async (req, res) => {
+        try {
+            // Obtener el ID del cliente desde los parámetros de la ruta
+            const idCliente = req.params.idCliente;
+    
+            // Validar que el ID del cliente sea proporcionado
+            if (!idCliente) {
+                return res.status(400).json({ error: 'El ID del cliente es obligatorio' });
+            }
+    
+            // Buscar si existe un registro en la base de datos con el ID del cliente
+            const feedbackExiste = await FeedBack.findOne({ idCliente });
+    
+            // Responder con un booleano indicando si existe feedback
+            if (feedbackExiste) {
+                return res.status(200).json(true); // Feedback existe
+            } else {
+                return res.status(200).json(false); // Feedback no existe
+            }
+        } catch (error) {
+            console.error('Error al verificar existencia de feedback:', error);
+            res.status(500).json({ error: 'Error del servidor al verificar feedback' });
+        }
+    };

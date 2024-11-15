@@ -6,6 +6,7 @@ const path = require('path');
 const fs = require('fs');
 const webpush = require('web-push');
 
+
 // Claves VAPID para Web Push (asegúrate de obtener las correctas desde tu servicio de Push)
 // Configurar las claves VAPID
 const vapidKeys = {
