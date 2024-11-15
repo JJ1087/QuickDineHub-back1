@@ -15,6 +15,8 @@ const Pago = require('../models/auth.modelCuentaBanco'); // Importa el modelo de
 const Direccion = require('../models/auth.modelDireccion');
 const Restaurante = require('../models/auth.modelrestaurante');
 
+const FeedBack = require('../models/auth.modelFeedBack');
+
 // exports.fetchOrdens = async (req, res) => {
 //     try {
 //         const ordenes = await DetalleOrden.find()
@@ -792,5 +794,37 @@ exports.obtenerInfoComensalConProductos = async (req, res) => {
         } catch (error) {
             console.error('Error al crear el Payment Sheet:', error);
             res.status(500).json({ error: 'Error del servidor al crear el Payment Sheet' });
+        }
+    };
+
+    exports.registrarFeedBack = async (req, res) => {
+        try {
+            // Extraer datos del cuerpo de la solicitud
+            const { idCliente, respuestaUno, respuestaDos, respuestaTres } = req.body;
+    
+            // Validar que todos los datos requeridos estén presentes
+            if (!idCliente || !respuestaUno || !respuestaDos || !respuestaTres) {
+                return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+            }
+    
+            // Crear un nuevo registro de feedback
+            const nuevoFeedback = new FeedBack({
+                idCliente,
+                respuestaUno,
+                respuestaDos,
+                respuestaTres,
+            });
+    
+            // Guardar en la base de datos
+            await nuevoFeedback.save();
+    
+            // Responder con éxito
+            res.status(201).json({
+                message: 'Feedback registrado exitosamente',
+                feedback: nuevoFeedback,
+            });
+        } catch (error) {
+            console.error('Error al registrar feedback:', error);
+            res.status(500).json({ error: 'Error del servidor al registrar feedback' });
         }
     };
