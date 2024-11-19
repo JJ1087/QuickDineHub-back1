@@ -17,17 +17,7 @@ const Restaurante = require('../models/auth.modelrestaurante');
 
 const FeedBack = require('../models/auth.modelFeedBack');
 
-
-// exports.fetchOrdens = async (req, res) => {
-//     try {
-//         const ordenes = await DetalleOrden.find()
-//         // const ordenes = await DetalleOrden.find().populate('idOrden');
-//         return res.status(200).json({ ordenes });
-//     } catch (error) {
-//         console.error('Error fetching orders:', error);
-//         return res.status(500).json({ error: 'Internal server error' });
-//     }
-// };
+const FeedBackweb = require('../models/auth.modelFeedBackweb');
 
 exports.fetchOrdens = async (req, res) => {
     try {
@@ -862,6 +852,64 @@ exports.obtenerInfoComensalConProductos = async (req, res) => {
     
             // Responder con un booleano indicando si existe feedback
             if (feedbackExiste) {
+                return res.status(200).json(true); // Feedback existe
+            } else {
+                return res.status(200).json(false); // Feedback no existe
+            }
+        } catch (error) {
+            console.error('Error al verificar existencia de feedback:', error);
+            res.status(500).json({ error: 'Error del servidor al verificar feedback' });
+        }
+    };
+
+
+    exports.registrarFeedBackweb = async (req, res) => {
+        try {
+            // Extraer datos del cuerpo de la solicitud
+            const { idCliente, respuestaUno, respuestaDos, respuestaTres } = req.body;
+    
+            // Validar que todos los datos requeridos estén presentes
+            if (!idCliente || !respuestaUno || !respuestaDos || !respuestaTres) {
+                return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+            }
+    
+            // Crear un nuevo registro de feedback
+            const nuevoFeedbackweb = new FeedBackweb({
+                idCliente,
+                respuestaUno,
+                respuestaDos,
+                respuestaTres,
+            });
+    
+            // Guardar en la base de datos
+            await nuevoFeedbackweb.save();
+    
+            // Responder con éxito
+            res.status(201).json({
+                message: 'Feedback registrado exitosamente',
+                feedback: nuevoFeedbackweb,
+            });
+        } catch (error) {
+            console.error('Error al registrar feedback:', error);
+            res.status(500).json({ error: 'Error del servidor al registrar feedback' });
+        }
+    };
+
+    exports.existeFeedBackweb = async (req, res) => {
+        try {
+            // Obtener el ID del cliente desde los parámetros de la ruta
+            const idCliente = req.params.idCliente;
+    
+            // Validar que el ID del cliente sea proporcionado
+            if (!idCliente) {
+                return res.status(400).json({ error: 'El ID del cliente es obligatorio' });
+            }
+    
+            // Buscar si existe un registro en la base de datos con el ID del cliente
+            const feedbackwebExiste = await FeedBackweb.findOne({ idCliente });
+    
+            // Responder con un booleano indicando si existe feedback
+            if (feedbackwebExiste) {
                 return res.status(200).json(true); // Feedback existe
             } else {
                 return res.status(200).json(false); // Feedback no existe

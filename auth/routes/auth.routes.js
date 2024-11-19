@@ -74,8 +74,12 @@ module.exports = (router) => {
     router.get('/carrito/:userId', Comensal.obtenerInfoComensalConProductos);
     router.post('/info-productosIds', Comensal.obtenerInfoDeProductosPorIds);//Usado por la movil
     router.post('/payment-sheet', Comensal.crearPaymentSheet);
+
     router.post('/feedback', Comensal.registrarFeedBack);
     router.get('/feedbacks/existe/:idCliente', Comensal.existeFeedBack);
+
+    router.post('/feedbackweb', Comensal.registrarFeedBackweb);
+    router.get('/feedbacksweb/existe/:idCliente', Comensal.existeFeedBackweb);
 
 
 }
