@@ -81,5 +81,5 @@ module.exports = (router) => {
     router.post('/feedbackweb', Comensal.registrarFeedBackweb);
     router.get('/feedbacksweb/existe/:idCliente', Comensal.existeFeedBackweb);
 
-
+    router.get('/info-feedbackweb', Comensal.obtenerInfoFeedbackweb); 
 }

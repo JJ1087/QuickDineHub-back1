@@ -919,3 +919,19 @@ exports.obtenerInfoComensalConProductos = async (req, res) => {
             res.status(500).json({ error: 'Error del servidor al verificar feedback' });
         }
     };
+
+    exports.obtenerInfoFeedbackweb = async (req, res, next) => {
+        try {
+          const feedbackwebs = await FeedBackweb.find({}, { 
+            _id: 1,  
+            respuestaUno: 1, 
+            respuestaDos: 1, 
+            respuestaTres: 1 
+          });
+      
+          res.status(200).json(feedbackwebs);
+        } catch (error) {
+          console.error('Error al obtener la información de los feedbacks:', error);
+          res.status(500).json({ error: 'Error del servidor al obtener la información de los feedbacks' });
+        }
+      };
